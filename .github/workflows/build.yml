@@ -81,7 +81,7 @@ jobs:
 
       - name: Rename APK
         run: |
-          mv target/x/release/android/gradle/app/build/outputs/apk/debug/app-debug.apk target/x/lvirtpmos-${{ steps.extract_version.outputs.version }}-debug.apk
+          mv target/x/release/android/gradle/app/build/outputs/apk/debug/app-debug.apk target/x/virtpmos-${{ steps.extract_version.outputs.version }}-debug.apk
           mv target/x/release/android/gradle/app/build/outputs/apk/release/app-release.apk target/x/virtpmos-${{ steps.extract_version.outputs.version }}.apk
       - name: Build AAB
         run: x build --release --platform=android --arch=arm64 --format=aab
@@ -97,6 +97,6 @@ jobs:
           tag_name: v${{ steps.extract_version.outputs.version }}
           files: |
             target/x/virtpmos-${{ steps.extract_version.outputs.version }}.apk
-            target/x/lvirtpmos-${{ steps.extract_version.outputs.version }}-debug.apk
+            target/x/virtpmos-${{ steps.extract_version.outputs.version }}-debug.apk
             target/x/virtpmos-${{ steps.extract_version.outputs.version }}.aab
             target/x/virtpmos-${{ steps.extract_version.outputs.version }}-debug.aab
