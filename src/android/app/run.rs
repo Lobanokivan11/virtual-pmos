@@ -53,11 +53,11 @@ impl ApplicationHandler<AppUserEvent> for PolarBearApp {
 
                 // Create the Output with given name and physical properties.
                 let output = Output::new(
-                    "Local Desktop Wayland Compositor".into(), // the name of this output,
+                    "Virtual PMOS Wayland Compositor".into(), // the name of this output,
                     PhysicalProperties {
                         size: size.into(),                 // dimensions (width, height) in mm
                         subpixel: Subpixel::HorizontalRgb, // subpixel information
-                        make: "Local Desktop".into(),      // make of the monitor
+                        make: "Virtual PMOS".into(),      // make of the monitor
                         model: config::VERSION.into(),     // model of the monitor
                     },
                 );
