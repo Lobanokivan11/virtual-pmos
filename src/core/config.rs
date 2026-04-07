@@ -7,11 +7,11 @@ use std::{
 pub const VERSION: &str = env!("CARGO_PKG_VERSION");
 
 #[cfg(not(test))]
-pub const ARCH_FS_ROOT: &str = "/data/data/app.polarbear/files/arch";
+pub const ARCH_FS_ROOT: &str = "/data/data/app.virtualpmos/files/pmos";
 #[cfg(test)]
-pub const ARCH_FS_ROOT: &str = "/data/local/tmp/arch";
+pub const ARCH_FS_ROOT: &str = "/data/local/tmp/pmos";
 
-pub const ARCH_FS_ARCHIVE: &str = "https://github.com/termux/proot-distro/releases/download/v4.29.0/archlinux-aarch64-pd-v4.29.0.tar.xz";
+pub const ARCH_FS_ARCHIVE: &str = "https://github.com/Lobanokivan11/pmos-proot/releases/download/github_run/postmarketos-aarch64.tar.xz";
 
 pub const WAYLAND_SOCKET_NAME: &str = "wayland-0";
 
@@ -46,7 +46,7 @@ pub struct UserConfig {
 impl Default for UserConfig {
     fn default() -> Self {
         Self {
-            username: "root".to_string(),
+            username: "default".to_string(),
         }
     }
 }
@@ -62,17 +62,17 @@ pub struct CommandConfig {
 }
 
 fn default_check() -> String {
-    "pacman -Q noto-fonts && pacman -Q lxqt-session && pacman -Q lxqt-panel && pacman -Q pcmanfm-qt && pacman -Q openbox && pacman -Q xorg-xwayland && pacman -Q lxqt-wayland-session && pacman -Q labwc && pacman -Q breeze-icons && pacman -Q qterminal && pacman -Q onboard"
+    "apk search postmarketos-ui-plasma-mobile"
         .to_string()
 }
 
 fn default_install() -> String {
-    "stdbuf -oL pacman -Syu --needed --noconfirm --noprogressbar noto-fonts liblxqt lxqt-about lxqt-admin lxqt-archiver lxqt-config lxqt-globalkeys lxqt-menu-data lxqt-notificationd lxqt-openssh-askpass lxqt-panel lxqt-policykit lxqt-powermanagement lxqt-qtplugin lxqt-runner lxqt-session lxqt-sudo lxqt-themes lxqt-wayland-session pcmanfm-qt qps qterminal screengrab xdg-desktop-portal-lxqt openbox xorg-xwayland labwc breeze-icons onboard"
+    "stdbuf -oL apk add postmarketos-ui-plasma-mobile"
         .to_string()
 }
 
 fn default_launch() -> String {
-    "XDG_RUNTIME_DIR=/tmp Xwayland -hidpi :1 2>&1 & while [ ! -e /tmp/.X11-unix/X1 ]; do sleep 0.1; done; XDG_SESSION_TYPE=x11 DISPLAY=:1 dbus-run-session startlxqt 2>&1"
+    "XDG_RUNTIME_DIR=/tmp WAYLAND_DISPLAY=wayland-0 /usr/lib/plasma-dbus-run-session-if-needed startplasmamobile 2>&1"
         .to_string()
 }
 
