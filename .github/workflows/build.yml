@@ -98,7 +98,7 @@ jobs:
           name: Virtual PMOS v${{ steps.extract_version.outputs.version }}
           tag_name: v${{ steps.extract_version.outputs.version }}
           files: |
-            target/x/localdesktop-${{ steps.extract_version.outputs.version }}.apk
-            target/x/localdesktop-${{ steps.extract_version.outputs.version }}-debug.apk
-            target/x/localdesktop-${{ steps.extract_version.outputs.version }}.aab
-            target/x/localdesktop-${{ steps.extract_version.outputs.version }}-debug.aab
+            target/x/virtpmos-${{ steps.extract_version.outputs.version }}.apk
+            target/x/lvirtpmos-${{ steps.extract_version.outputs.version }}-debug.apk
+            target/x/virtpmos-${{ steps.extract_version.outputs.version }}.aab
+            target/x/virtpmos-${{ steps.extract_version.outputs.version }}-debug.aab
