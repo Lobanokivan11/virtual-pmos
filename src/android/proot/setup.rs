@@ -329,7 +329,7 @@ fn install_dependencies(options: &SetupOptions) -> StageOutput {
         let sender_upd = mpsc_sender.clone();
         mpsc_sender.send(SetupMessage::Progress("Updating package indices...".to_string())).unwrap_or(());
         let update_output = ArchProcess {
-            command: "apk update".into(),
+            command: "apk update --allow-untrusted".into(),
             user: None,
             log: Some(Arc::new(move |it| {
                 sender_upd.send(SetupMessage::Progress(format!("Update: {}", it))).unwrap_or(());
@@ -338,6 +338,19 @@ fn install_dependencies(options: &SetupOptions) -> StageOutput {
         if !update_output.status.success() {
             let err = String::from_utf8_lossy(&update_output.stderr);
             mpsc_sender.send(SetupMessage::Error(format!("Update failed: {}", err))).unwrap_or(());
+        }
+        let sender_keys = mpsc_sender.clone();
+        mpsc_sender.send(SetupMessage::Progress("Installing Keys...".to_string())).unwrap_or(());
+        let keyins_output = ArchProcess {
+            command: "apk add --no-cache --allow-untrusted postmarketos-keys alpine-keys".into(),
+            user: None,
+            log: Some(Arc::new(move |it| {
+                sender_keys.send(SetupMessage::Progress(format!("Installing Keys: {}", it))).unwrap_or(());
+            })),
+        }.run();
+        if !keyins_output.status.success() {
+            let err = String::from_utf8_lossy(&update_output.stderr);
+            mpsc_sender.send(SetupMessage::Error(format!("Installing Keys failed: {}", err))).unwrap_or(());
         }
         let sender_ug = mpsc_sender.clone();
         mpsc_sender.send(SetupMessage::Progress("Upgrading system packages...".to_string())).unwrap_or(());
