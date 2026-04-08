@@ -72,7 +72,7 @@ fn default_install() -> String {
 }
 
 fn default_launch() -> String {
-    "mkdir -p /tmp/runtime && chmod 700 /tmp/runtime && XDG_RUNTIME_DIR=/tmp/runtime WAYLAND_DISPLAY=wayland-0 /usr/lib/plasma-dbus-run-session-if-needed startplasmamobile 2>&1"
+    "XDG_RUNTIME_DIR=/run WAYLAND_DISPLAY=wayland-0 /usr/lib/plasma-dbus-run-session-if-needed startplasmamobile 2>&1"
         .to_string()
 }
 
