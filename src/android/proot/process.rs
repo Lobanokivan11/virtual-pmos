@@ -148,9 +148,12 @@ impl ArchProcess {
             .arg("--sysvipc")
             .arg("--kill-on-exit")
             .arg("--root-id")
-            .arg("--bind=/dev")
+            .arg("--bind=/dev/null:/dev/null")
+            .arg("--bind=/dev/zero:/dev/zero")
+            .arg("--bind=/dev/full:/dev/full")
+            .arg("--bind=/dev/random:/dev/random")
+            .arg("--bind=/dev/urandom:/dev/urandom")
             .arg("--bind=/proc/self:/proc/self")
-            .arg("--bind=/sys")
             .arg("--bind=/dev/pts:/dev/pts")
             .arg("--bind=/dev/ptmx:/dev/ptmx")
             .arg(format!("--bind={}/tmp:/dev/shm", config::ARCH_FS_ROOT))
@@ -165,9 +168,13 @@ impl ArchProcess {
         }
 
         process
-            .arg("--bind=/dev")
+            .arg("--bind=/dev/null:/dev/null")
+            .arg("--bind=/dev/zero:/dev/zero")
+            .arg("--bind=/dev/full:/dev/full")
+            .arg("--bind=/dev/random:/dev/random")
+            .arg("--bind=/dev/urandom:/dev/urandom")
+            .arg("--bind=/dev/pts:/dev/pts")
             .arg("--bind=/proc/self:/proc/self")
-            .arg("--bind=/sys")
             .arg("--bind=/dev/pts")
             .arg(format!("--bind={}/run:/run", config::ARCH_FS_ROOT));
         process.arg(format!("--bind={}/tmp:/dev/shm", config::ARCH_FS_ROOT));
