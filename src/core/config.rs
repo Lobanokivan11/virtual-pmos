@@ -67,7 +67,7 @@ fn default_check() -> String {
 }
 
 fn default_install() -> String {
-    "apk add --no-cache --no-interactive flatpak discover-backend-flatpak pcmanfm-qt qps qterminal screengrab xdg-desktop-portal-kde openbox labwc breeze-icons onboard postmarketos-ui-plasma-mobile"
+    "apk add --no-cache --no-interactive dbus-x11 systemd-libs flatpak discover-backend-flatpak pcmanfm-qt qps qterminal screengrab xdg-desktop-portal-kde openbox labwc breeze-icons onboard postmarketos-ui-plasma-mobile"
         .to_string()
 }
 
