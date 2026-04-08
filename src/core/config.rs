@@ -72,7 +72,7 @@ fn default_install() -> String {
 }
 
 fn default_launch() -> String {
-    ".XDG_RUNTIME_DIR=/tmp WAYLAND_DISPLAY=wayland-0 /usr/lib/plasma-dbus-run-session-if-needed startplasmamobile 2>&1"
+    "XDG_RUNTIME_DIR=/tmp WAYLAND_DISPLAY=wayland-0 /usr/lib/plasma-dbus-run-session-if-needed startplasmamobile 2>&1"
         .to_string()
 }
 
