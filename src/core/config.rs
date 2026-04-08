@@ -67,7 +67,7 @@ fn default_check() -> String {
 }
 
 fn default_install() -> String {
-    "stdbuf -oL apk add doas noto-fonts pcmanfm-qt qps qterminal screengrab xdg-desktop-portal-kde openbox xorg-xwayland labwc breeze-icons onboard postmarketos-ui-plasma-mobile"
+    "stdbuf -oL apk add doas-sudo-shim doas noto-fonts pcmanfm-qt qps qterminal screengrab xdg-desktop-portal-kde openbox xorg-xwayland labwc breeze-icons onboard postmarketos-ui-plasma-mobile"
         .to_string()
 }
 
