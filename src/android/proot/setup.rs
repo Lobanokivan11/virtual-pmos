@@ -352,6 +352,11 @@ fn install_dependencies(options: &SetupOptions) -> StageOutput {
             let err = String::from_utf8_lossy(&update_output.stderr);
             mpsc_sender.send(SetupMessage::Error(format!("Installing Keys failed: {}", err))).unwrap_or(());
         }
+        ArchProcess {
+            command: "cp -a /usr/share/apk/keys/. /etc/apk/keys/".into(),
+            user: None,
+            log: None,
+        }.run();
         let sender_ug = mpsc_sender.clone();
         mpsc_sender.send(SetupMessage::Progress("Upgrading system packages...".to_string())).unwrap_or(());
         let upgrade_output = ArchProcess {
