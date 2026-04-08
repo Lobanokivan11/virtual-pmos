@@ -326,24 +326,32 @@ fn install_dependencies(options: &SetupOptions) -> StageOutput {
     return Some(thread::spawn(move || {
         let resolv_path = Path::new(ARCH_FS_ROOT).join("etc/resolv.conf");
         fs::write(resolv_path, "nameserver 8.8.8.8\n").expect("Failed to write resolv.conf");
-        let sender_update = mpsc_sender.clone();
+        let sender_upd = mpsc_sender.clone();
         mpsc_sender.send(SetupMessage::Progress("Updating package indices...".to_string())).unwrap_or(());
-        ArchProcess {
+        let update_output = ArchProcess {
             command: "apk update".into(),
             user: None,
             log: Some(Arc::new(move |it| {
-                sender_update.send(SetupMessage::Progress(format!("Update: {}", it))).unwrap_or(());
+                sender_upd.send(SetupMessage::Progress(format!("Update: {}", it))).unwrap_or(());
             })),
         }.run();
+        if !update_output.status.success() {
+            let err = String::from_utf8_lossy(&update_output.stderr);
+            mpsc_sender.send(SetupMessage::Error(format!("Update failed: {}", err))).unwrap_or(());
+        }
         let sender_ug = mpsc_sender.clone();
         mpsc_sender.send(SetupMessage::Progress("Upgrading system packages...".to_string())).unwrap_or(());
-        ArchProcess {
+        let upgrade_output = ArchProcess {
             command: "apk upgrade --no-cache --no-interactive".into(),
             user: None,
             log: Some(Arc::new(move |it| {
                 sender_ug.send(SetupMessage::Progress(format!("Upgrade: {}", it))).unwrap_or(());
             })),
         }.run();
+        if !upgrade_output.status.success() {
+            let err = String::from_utf8_lossy(&upgrade_output.stderr);
+            mpsc_sender.send(SetupMessage::Error(format!("Upgrade failed: {}", err))).unwrap_or(());
+        }
         const MAX_INSTALL_ATTEMPTS: usize = 10;
         // Install dependencies until `check` succeeds.
         for attempt in 1..=MAX_INSTALL_ATTEMPTS {
