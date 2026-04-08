@@ -134,7 +134,7 @@ fn setup_arch_fs(options: &SetupOptions) -> StageOutput {
 
                     mpsc_sender
                         .send(SetupMessage::Error(format!(
-                            "Failed to extract Arch Linux FS: {}. Restarting download...",
+                            "Failed to extract PMOS FS: {}. Restarting download...",
                             e
                         )))
                         .unwrap_or(());
@@ -243,7 +243,7 @@ fn install_dependencies(options: &SetupOptions) -> StageOutput {
         // Install dependencies until `check` succeeds.
         for attempt in 1..=MAX_INSTALL_ATTEMPTS {
             let output = ArchProcess {
-                command: "rm -f /var/lib/pacman/db.lck".into(),
+                command: "rm -f /lib/apk/db/lock".into(),
                 user: None,
                 log: None,
             }
