@@ -122,9 +122,12 @@ impl ArchProcess {
             .arg("--bind=/dev")
             .arg("--bind=/proc")
             .arg("--bind=/sys")
-            .arg(format!("--bind={}/tmp:/dev/shm", config::ARCH_FS_ROOT))
             .arg("--bind=/dev/pts:/dev/pts")
-            .arg("--bind=/dev/ptmx:/dev/ptmx");
+            .arg("--bind=/dev/ptmx:/dev/ptmx")
+            .arg(format!("--bind={}/tmp:/dev/shm", config::ARCH_FS_ROOT))
+            .arg(format!("--bind={}/run:/run", config::ARCH_FS_ROOT))
+            .arg(format!("--bind={}/proc/.loadavg:/proc/loadavg", config::ARCH_FS_ROOT))
+            .arg(format!("--bind={}/sys/.empty:/sys/fs/selinux", config::ARCH_FS_ROOT));
 
         if context.permission_all_files_access {
             process
