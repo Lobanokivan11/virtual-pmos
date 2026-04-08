@@ -342,7 +342,7 @@ fn install_dependencies(options: &SetupOptions) -> StageOutput {
         let sender_keys = mpsc_sender.clone();
         mpsc_sender.send(SetupMessage::Progress("Installing Keys...".to_string())).unwrap_or(());
         let keyins_output = ArchProcess {
-            command: "apk add --no-cache --allow-untrusted postmarketos-keys alpine-keys".into(),
+            command: "apk add --no-cache --no-interactive --allow-untrusted postmarketos-keys alpine-keys".into(),
             user: None,
             log: Some(Arc::new(move |it| {
                 sender_keys.send(SetupMessage::Progress(format!("Installing Keys: {}", it))).unwrap_or(());
