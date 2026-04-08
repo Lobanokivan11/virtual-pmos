@@ -67,9 +67,10 @@ fn default_check() -> String {
 }
 
 fn default_install() -> String {
-    "stdbuf -oL apk add postmarketos-ui-plasma-mobile"
+    "stdbuf -oL apk add doas noto-fonts pcmanfm-qt qps qterminal screengrab xdg-desktop-portal-kde openbox xorg-xwayland labwc breeze-icons onboard postmarketos-ui-plasma-mobile"
         .to_string()
 }
+
 
 fn default_launch() -> String {
     "XDG_RUNTIME_DIR=/tmp WAYLAND_DISPLAY=wayland-0 /usr/lib/plasma-dbus-run-session-if-needed startplasmamobile 2>&1"
@@ -101,7 +102,7 @@ fn process_config_file(full_config_path: String) -> Vec<String> {
 
             if let Some((key, value)) = trimmed.split_once('=') {
                 let key = key.trim();
-                let value = value.trim();
+                let value  value.trim();
 
                 if key.starts_with("try_") {
                     // Comment out the `try_*` configs
