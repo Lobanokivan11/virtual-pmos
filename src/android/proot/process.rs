@@ -149,7 +149,7 @@ impl ArchProcess {
             .arg("--kill-on-exit")
             .arg("--root-id")
             .arg("--bind=/dev")
-            .arg("--bind=/proc")
+            .arg("--bind=/proc/self:/proc/self")
             .arg("--bind=/sys")
             .arg("--bind=/dev/pts:/dev/pts")
             .arg("--bind=/dev/ptmx:/dev/ptmx")
@@ -166,7 +166,7 @@ impl ArchProcess {
 
         process
             .arg("--bind=/dev")
-            .arg("--bind=/proc")
+            .arg("--bind=/proc/self:/proc/self")
             .arg("--bind=/sys")
             .arg("--bind=/dev/pts")
             .arg(format!("--bind={}/run:/run", config::ARCH_FS_ROOT));
