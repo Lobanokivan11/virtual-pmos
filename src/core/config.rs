@@ -102,7 +102,7 @@ fn process_config_file(full_config_path: String) -> Vec<String> {
 
             if let Some((key, value)) = trimmed.split_once('=') {
                 let key = key.trim();
-                let value  value.trim();
+                let value = value.trim();
 
                 if key.starts_with("try_") {
                     // Comment out the `try_*` configs
