@@ -72,7 +72,7 @@ fn default_install() -> String {
 }
 
 fn default_launch() -> String {
-    "XDG_RUNTIME_DIR=/run/user/1000 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus WAYLAND_DISPLAY=wayland-0 XDG_SESSION_TYPE=wayland XDG_CURRENT_DESKTOP=KDE if [ ! -S /run/user/1000/bus ]; then dbus-daemon --session --address=$DBUS_SESSION_BUS_ADDRESS --nofork --nopidfile & fi && sleep 1 && /usr/lib/systemd/systemd --user & sleep 2 && /usr/lib/plasma-dbus-run-session-if-needed startplasmamobile 2>&1"
+    "XDG_RUNTIME_DIR=/run/user/$(id -u) DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$(id -u)/bus WAYLAND_DISPLAY=wayland-0 XDG_SESSION_TYPE=wayland XDG_CURRENT_DESKTOP=KDE if [ ! -S /run/user/$(id -u)/bus ]; then dbus-daemon --session --address=$DBUS_SESSION_BUS_ADDRESS --nofork --nopidfile & fi && sleep 1 && /usr/lib/systemd/systemd --user & sleep 2 && /usr/lib/plasma-dbus-run-session-if-needed startplasmamobile 2>&1"
         .to_string()
 }
 
