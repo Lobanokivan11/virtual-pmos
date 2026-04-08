@@ -53,7 +53,7 @@ type StageOutput = Option<JoinHandle<()>>;
 
 fn setup_arch_fs(options: &SetupOptions) -> StageOutput {
     let context = get_application_context();
-    let temp_file = context.data_dir.join("archlinux-fs.tar.xz");
+    let temp_file = context.data_dir.join("postmarketos-aarch64.tar.xz");
     let fs_root = Path::new(ARCH_FS_ROOT);
     let extracted_dir = context.data_dir.join("chroot_rootfs_qemu-aarch64");
     let mpsc_sender = options.mpsc_sender.clone();
