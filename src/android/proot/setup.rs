@@ -894,7 +894,6 @@ Hidden=true
 fn fix_xkb_symlink(options: &SetupOptions) -> StageOutput {
     let fs_root = Path::new(ARCH_FS_ROOT);
     let xkb_path = fs_root.join("usr/share/X11/xkb");
-    std::env::set_var("XKB_CONFIG_ROOT", &xkb_path); 
     let mpsc_sender = options.mpsc_sender.clone();
 
     if let Ok(meta) = fs::symlink_metadata(&xkb_path) {
@@ -906,8 +905,6 @@ fn fix_xkb_symlink(options: &SetupOptions) -> StageOutput {
                         xkb_path.display(),
                         target.display()
                     );
-                    // Compute the relative path from /usr/share/X11/xkb to /usr/share/xkeyboard-config-2
-                    // Both are inside the chroot, so strip the fs_root prefix
                     let xkb_inside = Path::new("/usr/share/X11/xkb");
                     let target_inside = Path::new("/usr/share/xkeyboard-config-2");
                     let rel_target = diff_paths(target_inside, xkb_inside.parent().unwrap())
@@ -917,7 +914,6 @@ fn fix_xkb_symlink(options: &SetupOptions) -> StageOutput {
                         xkb_path.display(),
                         rel_target.display()
                     );
-                    // Remove the old symlink
                     let _ = fs::remove_file(&xkb_path);
                     // Create the new relative symlink
                     if let Err(e) = symlink(&rel_target, &xkb_path) {
@@ -961,7 +957,6 @@ pub fn setup(android_app: AndroidApp) -> PolarBearBackend {
 
     let stages: Vec<SetupStage> = vec![
         Box::new(setup_arch_fs),
-        Box::new(fix_xkb_symlink),
         Box::new(simulate_linux_sysdata_stage),
         Box::new(setup_systemd_shim),
         Box::new(setup_fake_bwrap),
