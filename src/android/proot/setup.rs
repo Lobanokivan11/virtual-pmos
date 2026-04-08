@@ -169,6 +169,11 @@ fn setup_systemd_shim(_: &SetupOptions) -> StageOutput {
     let mut perms = fs::metadata(&run_user).unwrap().permissions();
     perms.set_mode(0o700); 
     let _ = fs::set_permissions(run_user, perms);
+    let shm_path = fs_root.join("dev/shm");
+    let _ = fs::create_dir_all(&shm_path);
+    let mut shm_perms = fs::metadata(&shm_path).unwrap().permissions();
+    shm_perms.set_mode(0o1777);
+    let _ = fs::set_permissions(shm_path, shm_perms);
     None
 }
 
