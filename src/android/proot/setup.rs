@@ -890,6 +890,7 @@ fn fix_xkb_symlink(options: &SetupOptions) -> StageOutput {
     let fs_root = Path::new(ARCH_FS_ROOT);
     let xkb_path = fs_root.join("usr/share/X11/xkb");
     let mpsc_sender = options.mpsc_sender.clone();
+    std::env::set_var("XKB_CONFIG_ROOT", Path::new(ARCH_FS_ROOT).join("usr/share/X11/xkb"));
 
     if let Ok(meta) = fs::symlink_metadata(&xkb_path) {
         if meta.file_type().is_symlink() {
@@ -957,10 +958,10 @@ pub fn setup(android_app: AndroidApp) -> PolarBearBackend {
         Box::new(setup_arch_fs),
         Box::new(fix_xkb_symlink),
         Box::new(simulate_linux_sysdata_stage),
-        Box::new(install_dependencies),
+        Box::new(setup_systemd_shim),
         Box::new(setup_fake_bwrap),
         Box::new(setup_onboard_signal_fix),
-        Box::new(setup_systemd_shim),
+        Box::new(install_dependencies),
     ];
 
     let handle_stage_error = |e: Box<dyn std::any::Any + Send>, sender: &Sender<SetupMessage>| {
