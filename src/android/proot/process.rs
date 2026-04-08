@@ -102,7 +102,9 @@ impl ArchProcess {
     pub fn run(self) -> Output {
         let context = get_application_context();
         let user = self.user.as_deref().unwrap_or("root");
-
+        if let Err(e) = self.prepare_rootfs_nodes() {
+            log::error!("Failed to prepare rootfs nodes: {}", e);
+        }
         let mut process = Command::new(context.native_library_dir.join("libproot.so"));
         process
             .env(
@@ -206,4 +208,31 @@ impl ArchProcess {
             process.output().expect("Failed to run command")
         }
     }
+}
+
+fn prepare_rootfs_nodes(&self) -> std::io::Result<()> {
+    let root = config::ARCH_FS_ROOT;
+    let dirs = [
+        format!("{}/proc", root),
+        format!("{}/sys/fs", root),
+        format!("{}/run", root),
+        format!("{}/tmp", root),
+    ];
+    for dir in &dirs {
+        fs::create_dir_all(dir)?;
+    }
+    let nodes = [
+        format!("{}/proc/.loadavg", root),
+        format!("{}/proc/.stat", root),
+        format!("{}/proc/.uptime", root),
+        format!("{}/proc/.version", root),
+        format!("{}/proc/.vmstat", root),
+        format!("{}/sys/.empty", root),
+    ];
+    for node in &nodes {
+        if !Path::new(node).exists() {
+            fs::File::create(node)?;
+        }
+    }
+    Ok(())
 }
