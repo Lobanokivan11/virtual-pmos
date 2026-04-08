@@ -136,24 +136,25 @@ impl ArchProcess {
         }
 
         process
-            .arg("--bind=/dev/urandom:/dev/random")
-            .arg("--bind=/proc/self/fd:/dev/fd")
-            .arg("--bind=/proc/self/fd/0:/dev/stdin")
-            .arg("--bind=/proc/self/fd/1:/dev/stdout")
-            .arg("--bind=/proc/self/fd/2:/dev/stderr")
+            .arg("--bind=/dev")
+            .arg("--bind=/proc")
+            .arg("--bind=/sys")
+            .arg("--bind=/dev/pts")
+            .arg(format!("--bind={}/run:/run", config::ARCH_FS_ROOT));
+        process.arg(format!("--bind={}/tmp:/dev/shm", config::ARCH_FS_ROOT));
+        process
             .arg(format!("--bind={}/proc/.loadavg:/proc/loadavg", config::ARCH_FS_ROOT))
             .arg(format!("--bind={}/proc/.stat:/proc/stat", config::ARCH_FS_ROOT))
             .arg(format!("--bind={}/proc/.uptime:/proc/uptime", config::ARCH_FS_ROOT))
             .arg(format!("--bind={}/proc/.version:/proc/version", config::ARCH_FS_ROOT))
             .arg(format!("--bind={}/proc/.vmstat:/proc/vmstat", config::ARCH_FS_ROOT))
-            .arg(format!("--bind={}/proc/.sysctl_entry_cap_last_cap:/proc/sys/kernel/cap_last_cap", config::ARCH_FS_ROOT))
-            .arg(format!("--bind={}/proc/.sysctl_inotify_max_user_watches:/proc/sys/fs/inotify/max_user_watches", config::ARCH_FS_ROOT))
-            .arg(format!("--bind=/proc:/proc"))
-            .arg(format!("--bind=/sys:/sys"))
-            .arg(format!("--bind=/dev:/dev"))
-            .arg(format!("--bind=/dev/shm:/dev/shm"))
-            .arg(format!("--bind={}/run:/run", config::ARCH_FS_ROOT))
-            .arg(format!("--bind={}/sys/.empty:/sys/fs/selinux", config::ARCH_FS_ROOT));
+            .arg(format!("--bind={}/sys/.empty:/sys/fs/selinux", config::ARCH_FS_ROOT))
+            .arg("--bind=/dev/urandom:/dev/random");
+        process
+            .arg("--bind=/proc/self/fd:/dev/fd")
+            .arg("--bind=/proc/self/fd/0:/dev/stdin")
+            .arg("--bind=/proc/self/fd/1:/dev/stdout")
+            .arg("--bind=/proc/self/fd/2:/dev/stderr");
 
         // env vars
         process.arg("/usr/bin/env").arg("-i");
