@@ -324,8 +324,19 @@ fn install_dependencies(options: &SetupOptions) -> StageOutput {
 
     let mpsc_sender = mpsc_sender.clone();
     return Some(thread::spawn(move || {
+        mpsc_sender.send(SetupMessage::Progress("Updating package indices...".to_string())).unwrap_or(());
+        ArchProcess {
+            command: "apk update".into(),
+            user: None,
+            log: None,
+        }.run();
+        mpsc_sender.send(SetupMessage::Progress("Upgrading system packages...".to_string())).unwrap_or(());
+        ArchProcess {
+            command: "apk upgrade".into(),
+            user: None,
+            log: None,
+        }.run();
         const MAX_INSTALL_ATTEMPTS: usize = 10;
-
         // Install dependencies until `check` succeeds.
         for attempt in 1..=MAX_INSTALL_ATTEMPTS {
             let output = ArchProcess {
@@ -350,7 +361,10 @@ fn install_dependencies(options: &SetupOptions) -> StageOutput {
                 })),
             }
             .run();
-
+            if !output.status.success() {
+                 let err = String::from_utf8_lossy(&output.stderr);
+                 mpsc_sender.send(SetupMessage::Progress(format!("Error: {}", err))).unwrap_or(());
+            }
             if installed() {
                 return;
             }
