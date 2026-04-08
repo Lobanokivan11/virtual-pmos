@@ -141,25 +141,36 @@ impl ArchProcess {
             .env("PROOT_TMP_DIR", context.data_dir);
 
         process
-            .arg("-r")
-            .arg(config::ARCH_FS_ROOT)
+            .arg("-r").arg(config::ARCH_FS_ROOT)
             .arg("-L")
             .arg("--link2symlink")
             .arg("--sysvipc")
             .arg("--kill-on-exit")
-            .arg("--root-id")
+            .arg("--root-id");
+
+        process
             .arg("--bind=/dev/null:/dev/null")
             .arg("--bind=/dev/zero:/dev/zero")
-            .arg("--bind=/dev/full:/dev/full")
             .arg("--bind=/dev/random:/dev/random")
             .arg("--bind=/dev/urandom:/dev/urandom")
-            .arg("--bind=/proc/self:/proc/self")
             .arg("--bind=/dev/pts:/dev/pts")
             .arg("--bind=/dev/ptmx:/dev/ptmx")
-            .arg(format!("--bind={}/tmp:/dev/shm", config::ARCH_FS_ROOT))
+            .arg("--bind=/dev/shm:/dev/shm");
+
+        process
             .arg(format!("--bind={}/run:/run", config::ARCH_FS_ROOT))
+            .arg("--bind=/proc/self:/proc/self")
+            .arg("--bind=/proc/self/fd:/dev/fd")
+            .arg("--bind=/proc/self/fd/0:/dev/stdin")
+            .arg("--bind=/proc/self/fd/1:/dev/stdout")
+            .arg("--bind=/proc/self/fd/2:/dev/stderr");
+
+        process
             .arg(format!("--bind={}/proc/.loadavg:/proc/loadavg", config::ARCH_FS_ROOT))
+            .arg(format!("--bind={}/proc/.stat:/proc/stat", config::ARCH_FS_ROOT))
+            .arg(format!("--bind={}/proc/.version:/proc/version", config::ARCH_FS_ROOT))
             .arg(format!("--bind={}/sys/.empty:/sys/fs/selinux", config::ARCH_FS_ROOT));
+
 
         if context.permission_all_files_access {
             process
