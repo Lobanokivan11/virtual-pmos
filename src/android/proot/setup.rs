@@ -161,7 +161,7 @@ fn setup_arch_fs(options: &SetupOptions) -> StageOutput {
 fn setup_systemd_shim(_: &SetupOptions) -> StageOutput {
     let fs_root = Path::new(ARCH_FS_ROOT);
     let run_user = fs_root.join("run/user/1000");
-    let _ = fs::create_dir_all(&run_user)ж
+    let _ = fs::create_dir_all(&run_user);
     let cgroups = ["sys/fs/cgroup/systemd", "sys/fs/cgroup/unified"];
     for cg in cgroups {
         let _ = fs::create_dir_all(fs_root.join(cg));
