@@ -324,6 +324,8 @@ fn install_dependencies(options: &SetupOptions) -> StageOutput {
 
     let mpsc_sender = mpsc_sender.clone();
     return Some(thread::spawn(move || {
+        let resolv_path = Path::new(ARCH_FS_ROOT).join("etc/resolv.conf");
+        fs::write(resolv_path, "nameserver 8.8.8.8\n").expect("Failed to write resolv.conf");
         mpsc_sender.send(SetupMessage::Progress("Updating package indices...".to_string())).unwrap_or(());
         ArchProcess {
             command: "apk update".into(),
@@ -351,7 +353,7 @@ fn install_dependencies(options: &SetupOptions) -> StageOutput {
                 String::from_utf8_lossy(&output.stderr)
             );
             let sender = mpsc_sender.clone();
-            ArchProcess {
+            let output = ArchProcess {
                 command: install.clone(),
                 user: None,
                 log: Some(Arc::new(move |it| {
@@ -359,8 +361,7 @@ fn install_dependencies(options: &SetupOptions) -> StageOutput {
                         .send(SetupMessage::Progress(it))
                         .expect("Failed to send log message");
                 })),
-            }
-            .run();
+            }.run();
             if !output.status.success() {
                  let err = String::from_utf8_lossy(&output.stderr);
                  mpsc_sender.send(SetupMessage::Progress(format!("Error: {}", err))).unwrap_or(());
