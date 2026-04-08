@@ -62,7 +62,7 @@ pub struct CommandConfig {
 }
 
 fn default_check() -> String {
-    "apk search postmarketos-ui-plasma-mobile"
+    "apk info postmarketos-ui-plasma-mobile"
         .to_string()
 }
 
