@@ -158,6 +158,20 @@ fn setup_arch_fs(options: &SetupOptions) -> StageOutput {
     None
 }
 
+fn setup_systemd_shim(_: &SetupOptions) -> StageOutput {
+    let fs_root = Path::new(ARCH_FS_ROOT);
+    let run_user = fs_root.join("run/user/1000");
+    let _ = fs::create_dir_all(&run_user)ж
+    let cgroups = ["sys/fs/cgroup/systemd", "sys/fs/cgroup/unified"];
+    for cg in cgroups {
+        let _ = fs::create_dir_all(fs_root.join(cg));
+    }
+    let mut perms = fs::metadata(&run_user).unwrap().permissions();
+    perms.set_mode(0o700); 
+    let _ = fs::set_permissions(run_user, perms);
+    None
+}
+
 fn setup_fake_bwrap(_: &SetupOptions) -> StageOutput {
     let fs_root = Path::new(ARCH_FS_ROOT);
     let wrapper_path = fs_root.join("usr/local/bin/bwrap");
@@ -945,6 +959,7 @@ pub fn setup(android_app: AndroidApp) -> PolarBearBackend {
         Box::new(install_dependencies),         // Step 3. Install dependencies
         Box::new(setup_fake_bwrap),           // Step 4. Replace bwrap with a no-sandbox shim (Android has no user namespaces)
         Box::new(setup_onboard_signal_fix), // Step 5. Wrap Onboard to survive proot fstat/signal.set_wakeup_fd failure
+        Box::new(setup_systemd_shim), // Step 6. Create systemd shim
     ];
 
     let handle_stage_error = |e: Box<dyn std::any::Any + Send>, sender: &Sender<SetupMessage>| {
