@@ -890,7 +890,6 @@ fn fix_xkb_symlink(options: &SetupOptions) -> StageOutput {
     let fs_root = Path::new(ARCH_FS_ROOT);
     let xkb_path = fs_root.join("usr/share/X11/xkb");
     let mpsc_sender = options.mpsc_sender.clone();
-    std::env::set_var("XKB_CONFIG_ROOT", Path::new(ARCH_FS_ROOT).join("usr/share/X11/xkb"));
 
     if let Ok(meta) = fs::symlink_metadata(&xkb_path) {
         if meta.file_type().is_symlink() {
