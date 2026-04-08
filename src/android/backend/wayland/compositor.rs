@@ -193,7 +193,7 @@ impl Compositor {
         let dh = display.handle();
 
         let mut seat_state = SeatState::new();
-        let mut seat = seat_state.new_wl_seat(&dh, "Local Desktop");
+        let mut seat = seat_state.new_wl_seat(&dh, "Virtual PMOS");
 
         let listener = bind_socket()?;
         let clients = Vec::new();
