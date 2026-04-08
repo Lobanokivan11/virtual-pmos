@@ -328,13 +328,13 @@ fn install_dependencies(options: &SetupOptions) -> StageOutput {
         fs::write(resolv_path, "nameserver 8.8.8.8\n").expect("Failed to write resolv.conf");
         mpsc_sender.send(SetupMessage::Progress("Updating package indices...".to_string())).unwrap_or(());
         ArchProcess {
-            command: "apk update".into(),
+            command: "apk update --no-cache --no-interactive".into(),
             user: None,
             log: None,
         }.run();
         mpsc_sender.send(SetupMessage::Progress("Upgrading system packages...".to_string())).unwrap_or(());
         ArchProcess {
-            command: "apk upgrade".into(),
+            command: "apk upgrade --no-cache --no-interactive".into(),
             user: None,
             log: None,
         }.run();
