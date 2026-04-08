@@ -67,10 +67,9 @@ fn default_check() -> String {
 }
 
 fn default_install() -> String {
-    "apk add doas-sudo-shim doas noto-fonts pcmanfm-qt qps qterminal screengrab xdg-desktop-portal-kde openbox xorg-xwayland labwc breeze-icons onboard postmarketos-ui-plasma-mobile"
+    "apk add flatpak discover-backend-flatpak noto-fonts pcmanfm-qt qps qterminal screengrab xdg-desktop-portal-kde openbox xorg-xwayland labwc breeze-icons onboard postmarketos-ui-plasma-mobile"
         .to_string()
 }
-
 
 fn default_launch() -> String {
     "XDG_RUNTIME_DIR=/tmp WAYLAND_DISPLAY=wayland-0 /usr/lib/plasma-dbus-run-session-if-needed startplasmamobile 2>&1"
