@@ -954,12 +954,13 @@ pub fn setup(android_app: AndroidApp) -> PolarBearBackend {
     };
 
     let stages: Vec<SetupStage> = vec![
-        Box::new(setup_arch_fs),                // Step 1. Setup Arch FS (extract)
-        Box::new(simulate_linux_sysdata_stage), // Step 2. Simulate Linux system data
-        Box::new(install_dependencies),         // Step 3. Install dependencies
-        Box::new(setup_fake_bwrap),           // Step 4. Replace bwrap with a no-sandbox shim (Android has no user namespaces)
-        Box::new(setup_onboard_signal_fix), // Step 5. Wrap Onboard to survive proot fstat/signal.set_wakeup_fd failure
-        Box::new(setup_systemd_shim), // Step 6. Create systemd shim
+        Box::new(setup_arch_fs),
+        Box::new(fix_xkb_symlink),
+        Box::new(simulate_linux_sysdata_stage),
+        Box::new(install_dependencies),
+        Box::new(setup_fake_bwrap),
+        Box::new(setup_onboard_signal_fix),
+        Box::new(setup_systemd_shim),
     ];
 
     let handle_stage_error = |e: Box<dyn std::any::Any + Send>, sender: &Sender<SetupMessage>| {
