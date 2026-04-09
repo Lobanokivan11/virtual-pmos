@@ -101,6 +101,11 @@ impl ArchProcess {
 
     fn prepare_rootfs_nodes(&self) -> std::io::Result<()> {
         let root = config::ARCH_FS_ROOT;
+        let resolv_path = format!("{}/etc/resolv.conf", root);
+        if !Path::new(&resolv_path).exists() {
+            fs::create_dir_all(format!("{}/etc", root))?;
+            fs::write(&resolv_path, "nameserver 1.1.1.1\nnameserver 1.0.0.1\n")?;
+        }
         let dirs = [
             format!("{}/proc", root),
             format!("{}/sys/fs", root),
@@ -147,6 +152,9 @@ impl ArchProcess {
             .arg("--sysvipc")
             .arg("--kill-on-exit")
             .arg("--root-id");
+
+        process.arg(format!("--bind=/system/etc/hosts:/etc/hosts"));
+        process.arg(format!("--bind=/etc/resolv.conf:/etc/resolv.conf"));
 
         process
             .arg("--bind=/dev/null:/dev/null")
