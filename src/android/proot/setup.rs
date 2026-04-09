@@ -356,7 +356,9 @@ fn install_dependencies(options: &SetupOptions) -> StageOutput {
         }.run();
         if !update_output.status.success() {
             let err = String::from_utf8_lossy(&update_output.stderr);
-            mpsc_sender.send(SetupMessage::Error(format!("Update failed: {}", err))).unwrap_or(());
+            let out = String::from_utf8_lossy(&update_output.stdout);
+            mpsc_sender.send(SetupMessage::Error(format!("Update failed. Out: {}, Err: {}", out, err))).unwrap_or(());
+            return;
         }
         let sender_keys = mpsc_sender.clone();
         mpsc_sender.send(SetupMessage::Progress("Installing Keys...".to_string())).unwrap_or(());
