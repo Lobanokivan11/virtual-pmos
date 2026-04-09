@@ -348,7 +348,7 @@ fn install_dependencies(options: &SetupOptions) -> StageOutput {
         let sender_upd = mpsc_sender.clone();
         mpsc_sender.send(SetupMessage::Progress("Updating package indices...".to_string())).unwrap_or(());
         let update_output = ArchProcess {
-            command: "apk update --allow-untrusted".into(),
+            command: "apk update -v --allow-untrusted".into(),
             user: None,
             log: Some(Arc::new(move |it| {
                 sender_upd.send(SetupMessage::Progress(format!("Update: {}", it))).unwrap_or(());
