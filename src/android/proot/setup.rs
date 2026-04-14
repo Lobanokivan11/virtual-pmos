@@ -343,8 +343,6 @@ fn install_dependencies(options: &SetupOptions) -> StageOutput {
 
     let mpsc_sender = mpsc_sender.clone();
     return Some(thread::spawn(move || {
-        let resolv_path = Path::new(ARCH_FS_ROOT).join("etc/resolv.conf");
-        fs::write(resolv_path, "nameserver 8.8.8.8\n").expect("Failed to write resolv.conf");
         let sender_upd = mpsc_sender.clone();
         mpsc_sender.send(SetupMessage::Progress("Updating package indices...".to_string())).unwrap_or(());
         let update_output = ArchProcess {
@@ -358,7 +356,6 @@ fn install_dependencies(options: &SetupOptions) -> StageOutput {
             let err = String::from_utf8_lossy(&update_output.stderr);
             let out = String::from_utf8_lossy(&update_output.stdout);
             mpsc_sender.send(SetupMessage::Error(format!("Update failed. Out: {}, Err: {}", out, err))).unwrap_or(());
-            return;
         }
         let sender_keys = mpsc_sender.clone();
         mpsc_sender.send(SetupMessage::Progress("Installing Keys...".to_string())).unwrap_or(());
