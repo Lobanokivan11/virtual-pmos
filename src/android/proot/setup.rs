@@ -343,6 +343,20 @@ fn install_dependencies(options: &SetupOptions) -> StageOutput {
 
     let mpsc_sender = mpsc_sender.clone();
     return Some(thread::spawn(move || {
+        let fs_root = Path::new(ARCH_FS_ROOT);
+        let etc_dir = fs_root.join("etc");
+        let _ = fs::create_dir_all(&etc_dir);
+        let resolv_conf = etc_dir.join("resolv.conf");
+        let dns_content = "nameserver 8.8.8.8\nnameserver 8.8.4.4\n";
+        if let Err(e) = fs::write(&resolv_conf, dns_content) {
+            mpsc_sender.send(SetupMessage::Error(format!("Failed to setup DNS: {}", e))).unwrap_or(());
+            return;
+        }
+        if let Ok(metadata) = fs::metadata(&resolv_conf) {
+            let mut perms = metadata.permissions();
+            perms.set_mode(0o644);
+            let _ = fs::set_permissions(&resolv_conf, perms);
+        }
         let sender_upd = mpsc_sender.clone();
         mpsc_sender.send(SetupMessage::Progress("Updating package indices...".to_string())).unwrap_or(());
         let update_output = ArchProcess {
@@ -584,25 +598,6 @@ fn upsert_kv_file(path: &Path, delimiter: char, updates: &[(&str, String)]) {
     }
     let content = render_kv_lines(&lines);
     fs::write(path, content).expect("Failed to write key/value file");
-}
-
-fn setup_network(_: &SetupOptions) -> StageOutput {
-    let fs_root = Path::new(ARCH_FS_ROOT);
-    let etc_dir = fs_root.join("etc");
-    let resolv_conf = etc_dir.join("resolv.conf");
-    let _ = fs::create_dir_all(&etc_dir);
-    let dns_content = "nameserver 8.8.8.8\nnameserver 8.8.4.4\n";
-    match fs::write(&resolv_conf, dns_content) {
-        Ok(_) => {
-            if let Ok(metadata) = fs::metadata(&resolv_conf) {
-                let mut perms = metadata.permissions();
-                perms.set_mode(0o644);
-                let _ = fs::set_permissions(&resolv_conf, perms);
-            }
-        }
-        Err(e) => eprintln!("Failed to write resolv.conf: {}", e),
-    }
-    None
 }
 
 fn update_ini_section(content: &str, section: &str, updates: &[(&str, String)]) -> String {
